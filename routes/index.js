@@ -35,13 +35,13 @@ router.post('/slack/actions', function(req, res, next) {
   res.status(200).end();
 
   var payload = JSON.parse(req.body.payload);
-  console.log(payload);
 
-  let responseUrl = req.body.payload.response_url;
+  let responseUrl = payload.response_url;
   if (payload.token != process.env.TOKEN) {
     res.status(403).end("Access forbidden");
     return;
   }
+  console.log(payload);
 
   console.log(responseUrl);
   // res.json(req.body);
@@ -53,6 +53,14 @@ router.post('/', function(req, res, next) {
   let responseUrl = req.body.response_url;
   if (req.body.token != process.env.TOKEN) {
     res.status(403).end("Access forbidden");
+    return;
+  }
+
+  if (!req.body.text) {
+    sendMessageToSlackResponseURL(responseUrl, {
+      'response_type': 'ephemeral', 
+      'text': 'You should input tag.'
+    });
     return;
   }
 
@@ -90,6 +98,7 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
+  var tag = req.body.text;
   var buttons = {};
   buttons.fallback = 'You are unable to choose a jjal';
   buttons.callback_id = 'jjal_interaction';
@@ -100,18 +109,6 @@ router.post('/', function(req, res, next) {
 
   message.attachments.push({ 'blocks': blocks });
   message.attachments.push(buttons);
-
-  var tag;
-
-  if (!req.body.text) {
-    sendMessageToSlackResponseURL(responseUrl, {
-      'response_type': 'ephemeral', 
-      'text': 'You should input tag.'
-    });
-    return;
-  }
-
-  tag = req.body.text;
 
   jjalSelector.getJJalList(tag, 0, function(err, result) {
     if (err) {
