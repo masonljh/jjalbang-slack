@@ -64,6 +64,7 @@ router.post('/slack/actions', function(req, res, next) {
       break;
     case 'send':
       console.log('send');
+      console.log(strings[3]);
       break;
   }
 
