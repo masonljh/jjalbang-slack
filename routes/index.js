@@ -41,10 +41,37 @@ router.post('/slack/actions', function(req, res, next) {
     res.status(403).end("Access forbidden");
     return;
   }
-  console.log(payload);
+  
+  if (payload.actions.length === 0) {
+    return;
+  }
 
-  console.log(responseUrl);
-  // res.json(req.body);
+  var action = payload.actions[0];
+  let strings = action.value.split('/');
+  let tag = strings[0];
+  var page = Number.parseInt(strings[1]);
+  var idx = Number.parseInt(strings[2]);
+
+  switch(action.name) {
+    case 'prev':
+      console.log('prev');
+      break;
+    case 'next':
+      console.log('next');
+      break;
+    case 'cancel':
+      console.log('cancel');
+      break;
+    case 'send':
+      console.log('send');
+      break;
+  }
+
+  console.log(tag + " / " + page + " / " + idx);
+  // res.json({
+  //   'response_type': 'in_channel',
+  //   'text': result
+  // });
 });
 
 router.post('/', function(req, res, next) {
@@ -135,11 +162,6 @@ router.post('/', function(req, res, next) {
     message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + result[0].list_jjal.substring(startIdx, endIdx);
     console.log(message.attachments[0].blocks[2].image_url);
     sendMessageToSlackResponseURL(responseUrl, message);
-
-    // res.json({
-    //   'response_type': 'in_channel',
-    //   'text': result
-    // });
   });
 });
 
