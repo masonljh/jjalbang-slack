@@ -101,7 +101,7 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
-  message.attachments.push(blocks);
+  message.attachments.push({ 'blocks': blocks });
 
   // var message = {
   //   "text": "I am a test message http://slack.com"
