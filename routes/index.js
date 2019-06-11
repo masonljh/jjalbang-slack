@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var jjalSelector = require('../libs/jjalSelector');
 var request = require('request');
+var config = require('../config/config');
 
 /* GET addToSlack page. */
 router.get('/auth', function(req, res, next) {
@@ -105,6 +106,21 @@ router.post('/', function(req, res, next) {
       return;
     }
 
+    let startIdx = result[0].list_jjal.indexOf('<img src=\"/files') + 10;
+    let endIdx;
+    
+    if (result[0].list_jjal.indexOf('.jpg') != -1) {
+      endIdx = result[0].list_jjal.indexOf('.jpg') + 4;
+    } else if (result[0].list_jjal.indexOf('.png') != -1) {
+      endIdx = result[0].list_jjal.indexOf('.png') + 4;
+    } else if (result[0].list_jjal.indexOf('.gif') != -1) {
+      endIdx = result[0].list_jjal.indexOf('.gif') + 4;
+    } else {
+      endIdx = result[0].list_jjal.indexOf('.jpeg') + 5;
+    }
+
+    message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + result[0].list_jjal.substring(startIdx, endIdx);
+    console.log(message.attachments[0].blocks[2].image_url);
     sendMessageToSlackResponseURL(responseUrl, message);
 
     // res.json({
