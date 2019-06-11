@@ -47,7 +47,7 @@ router.post('/slack/actions', function(req, res, next) {
   }
 
   var action = payload.actions[0];
-  let strings = action.value.split('/');
+  let strings = action.value.split(',');
   let tag = strings[0];
   var page = Number.parseInt(strings[1]);
   var idx = Number.parseInt(strings[2]);
@@ -147,7 +147,7 @@ router.post('/', function(req, res, next) {
     }
 
     let startIdx = result[0].list_jjal.indexOf('<img src=\"/files') + 10;
-    let endIdx;
+    let endIdx = -1;
 
     if (result[0].list_jjal.indexOf('.jpg') != -1) {
       endIdx = result[0].list_jjal.indexOf('.jpg') + 4;
@@ -160,6 +160,8 @@ router.post('/', function(req, res, next) {
     }
 
     message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + result[0].list_jjal.substring(startIdx, endIdx);
+    message.attachments[1].actions[3].value += message.attachments[0].blocks[2].image_url;
+
     console.log(message.attachments[0].blocks[2].image_url);
     sendMessageToSlackResponseURL(responseUrl, message);
   });
@@ -171,7 +173,7 @@ function initializeButtons(buttons, names, tag) {
       name: names[i],
       text: names[i],
       type: 'button',
-      value: tag + '/0/0'
+      value: tag + ',0,0'
     });
   }
 }
