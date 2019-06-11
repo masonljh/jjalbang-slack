@@ -4,17 +4,21 @@ var jjalSelector = require('../libs/jjalSelector');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  res.render('index', {title: 'jjalbang'});
+});
+
+router.post('/', function(req, res, next) {
   var page = 0;
-  if (!req.query.tag) {
-    res.status(400).json({code: '400', msg: 'Query is undefined!'});
+  if (!req.body.tag) {
+    res.status(400).json({code: '400', msg: 'Tag is undefined!'});
     return;
   }
 
-  if (req.params.page) {
-    page = req.query.page;
+  if (req.body.page) {
+    page = req.body.page;
   }
 
-  jjalSelector.getJJalList(req.query.tag, page, function(err, result) {
+  jjalSelector.getJJalList(req.body.tag, page, function(err, result) {
     if (err) {
       res.json(err);
       return;
