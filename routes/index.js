@@ -3,8 +3,8 @@ var router = express.Router();
 var jjalSelector = require('../libs/jjalSelector');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', {title: 'jjalbang'});
+router.get('/auth', function(req, res, next) {
+  res.sendFile(__dirname + '/add_to_slack.html');
 });
 
 router.post('/', function(req, res, next) {
@@ -36,7 +36,7 @@ router.post('/', function(req, res, next) {
 
     res.json({
       'response_type': 'in_channel',
-      'text': result
+      'text': Stringifyresult
     });
   });
 });
