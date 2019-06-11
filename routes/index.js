@@ -20,14 +20,14 @@ router.get('/auth/redirect', function(req, res, next) {
   }
 
   request(options, (error, response, body) => {
-      var JSONresponse = JSON.parse(body)
-      if (!JSONresponse.ok){
-          console.log(JSONresponse)
-          res.send("Error encountered: \n"+JSON.stringify(JSONresponse)).status(200).end()
-      }else{
-          console.log(JSONresponse)
-          res.send("Success!")
-      }
+    var JSONresponse = JSON.parse(body);
+    if (!JSONresponse.ok){
+      console.log(JSONresponse)
+      res.send("Error encountered: \n"+JSON.stringify(JSONresponse)).status(200).end()
+    } else {
+      console.log(JSONresponse);
+      res.send("Success!");
+    }
   });
 });
 
@@ -51,22 +51,80 @@ router.post('/slack/actions', function(req, res, next) {
   let tag = strings[0];
   var page = Number.parseInt(strings[1]);
   var idx = Number.parseInt(strings[2]);
+  var message;
 
   switch(action.name) {
     case 'prev':
       console.log('prev');
+      if (idx > 0) {
+        idx--;
+      } else {
+        if (page !== 0) {
+          page--;
+          idx = 23;
+        }
+      }
+      message = createSelectMessage(tag, page, idx);
       break;
     case 'next':
       console.log('next');
-      break;
-    case 'cancel':
-      console.log('cancel');
+      if (idx < 23) {
+        idx++;
+      } else {
+        page++;
+        idx = 0;
+      }
+      message = createSelectMessage(tag, page, idx);
       break;
     case 'send':
       console.log('send');
-      console.log(strings[3]);
-      break;
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'in_channel',
+        'attachments': [
+          {
+            'image_url': strings[3]
+          }
+        ]
+      });
+      return;
   }
+
+  jjalSelector.getJJalList(tag, page, function(err, result) {
+    if (err) {
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
+        'text': 'Sorry, that didn\'t work. Please try again.'
+      });
+      return;
+    }
+
+    var jjalStr = result[idx].list_jjal;
+    let startIdx = jjalStr.indexOf('<img src=\"/files') + 10;
+    let endIdx = -1;
+
+    if (jjalStr.indexOf('.jpg') != -1) {
+      endIdx = jjalStr.indexOf('.jpg') + 4;
+    } else if (jjalStr.indexOf('.png') != -1) {
+      endIdx = jjalStr.indexOf('.png') + 4;
+    } else if (jjalStr.indexOf('.gif') != -1) {
+      endIdx = jjalStr.indexOf('.gif') + 4;
+    } else if (jjalStr.indexOf('.jpeg') != -1) {
+      endIdx = jjalStr.indexOf('.jpeg') + 5;
+    } else {
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
+        'text': '해당 이미지가 존재하지 않습니다.'
+      });
+      return;
+    }
+
+    message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + jjalStr.substring(startIdx, endIdx);
+    message.attachments[1].actions[2].value = message.attachments[1].actions[2].value + ',' + message.attachments[0].blocks[2].image_url;
+
+    console.log(message.attachments[0].blocks[2].image_url);
+
+    sendMessageToSlackResponseURL(responseUrl, message);
+  });
 
   console.log(tag + " / " + page + " / " + idx);
   // res.json({
@@ -92,6 +150,45 @@ router.post('/', function(req, res, next) {
     return;
   }
 
+  var message = createSelectMessage(req.body.text, 0, 0);
+  jjalSelector.getJJalList(tag, 0, function(err, result) {
+    if (err) {
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
+        'text': 'Sorry, that didn\'t work. Please try again.'
+      });
+      return;
+    }
+
+    var jjalStr = result[0].list_jjal;
+    let startIdx = jjalStr.indexOf('<img src=\"/files') + 10;
+    let endIdx = -1;
+
+    if (jjalStr.indexOf('.jpg') != -1) {
+      endIdx = jjalStr.indexOf('.jpg') + 4;
+    } else if (jjalStr.indexOf('.png') != -1) {
+      endIdx = jjalStr.indexOf('.png') + 4;
+    } else if (jjalStr.indexOf('.gif') != -1) {
+      endIdx = jjalStr.indexOf('.gif') + 4;
+    } else if (jjalStr.indexOf('.jpeg') != -1) {
+      endIdx = jjalStr.indexOf('.jpeg') + 5;
+    } else {
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
+        'text': '해당 이미지가 존재하지 않습니다.'
+      });
+      return;
+    }
+
+    message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + jjalStr.substring(startIdx, endIdx);
+    message.attachments[1].actions[2].value = message.attachments[1].actions[2].value + ',' + message.attachments[0].blocks[2].image_url;
+
+    console.log(message.attachments[0].blocks[2].image_url);
+    sendMessageToSlackResponseURL(responseUrl, message);
+  });
+});
+
+function createSelectMessage(tag, page, idx) {
   var message = {};
   message.attachments = [];
   var blocks = [];
@@ -126,55 +223,27 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
-  var tag = req.body.text;
   var buttons = {};
   buttons.fallback = 'You are unable to choose a jjal';
   buttons.callback_id = 'jjal_interaction';
   buttons.color = '#3AA3E3';
   buttons.attachment_type = 'default';
   buttons.actions = [];
-  initializeButtons(buttons, ['prev', 'next', 'cancel', 'send'], tag);
+  initializeButtons(buttons, ['prev', 'next', 'send'], tag, page, idx);
 
   message.attachments.push({ 'blocks': blocks });
   message.attachments.push(buttons);
 
-  jjalSelector.getJJalList(tag, 0, function(err, result) {
-    if (err) {
-      sendMessageToSlackResponseURL(responseUrl, {
-        'response_type': 'ephemeral', 
-        'text': 'Sorry, that didn\'t work. Please try again.'
-      });
-      return;
-    }
+  return message;
+}
 
-    let startIdx = result[0].list_jjal.indexOf('<img src=\"/files') + 10;
-    let endIdx = -1;
-
-    if (result[0].list_jjal.indexOf('.jpg') != -1) {
-      endIdx = result[0].list_jjal.indexOf('.jpg') + 4;
-    } else if (result[0].list_jjal.indexOf('.png') != -1) {
-      endIdx = result[0].list_jjal.indexOf('.png') + 4;
-    } else if (result[0].list_jjal.indexOf('.gif') != -1) {
-      endIdx = result[0].list_jjal.indexOf('.gif') + 4;
-    } else {
-      endIdx = result[0].list_jjal.indexOf('.jpeg') + 5;
-    }
-
-    message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + result[0].list_jjal.substring(startIdx, endIdx);
-    message.attachments[1].actions[3].value = message.attachments[1].actions[3].value + ',' + message.attachments[0].blocks[2].image_url;
-
-    console.log(message.attachments[0].blocks[2].image_url);
-    sendMessageToSlackResponseURL(responseUrl, message);
-  });
-});
-
-function initializeButtons(buttons, names, tag) {
+function initializeButtons(buttons, names, tag, page, idx) {
   for (var i in names) {
     buttons.actions.push({
       name: names[i],
       text: names[i],
       type: 'button',
-      value: tag + ',0,0'
+      value: tag + ',' + page + ',' + idx
     });
   }
 }
