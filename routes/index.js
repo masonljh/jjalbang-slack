@@ -62,11 +62,11 @@ router.post('/', function(req, res, next) {
     "type": "image",
     "title": {
       "type": "plain_text",
-      "text": "image1",
+      "text": "jjal",
       "emoji": true
     },
     "image_url": "https://api.slack.com/img/blocks/bkb_template_images/beagle.png",
-    "alt_text": "image1"
+    "alt_text": "jjal"
   });
 
   /* 구분선 */
@@ -108,7 +108,7 @@ router.post('/', function(req, res, next) {
 
     let startIdx = result[0].list_jjal.indexOf('<img src=\"/files') + 10;
     let endIdx;
-    
+
     if (result[0].list_jjal.indexOf('.jpg') != -1) {
       endIdx = result[0].list_jjal.indexOf('.jpg') + 4;
     } else if (result[0].list_jjal.indexOf('.png') != -1) {
