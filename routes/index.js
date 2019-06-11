@@ -118,7 +118,10 @@ router.post('/slack/actions', function(req, res, next) {
           if (error){
               // handle errors as you see fit
               console.log('error', error);
+              return;
           }
+
+          console.log(body);
       });
 
       return;
