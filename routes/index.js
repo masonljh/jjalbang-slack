@@ -34,13 +34,13 @@ router.get('/auth/redirect', function(req, res, next) {
 router.post('/slack/actions', function(req, res, next) {
   res.status(200).end();
 
+  console.log(req.body);
+
   let responseUrl = req.body.response_url;
   if (req.body.token != process.env.TOKEN) {
     res.status(403).end("Access forbidden");
     return;
   }
-
-  console.log(req.body);
   // res.json(req.body);
 });
 
