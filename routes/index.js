@@ -58,7 +58,7 @@ router.post('/slack/actions', function(req, res, next) {
 
   switch(action.name) {
     case 'prev':
-      console.log('prev');
+      // console.log('prev');
       if (idx > 0) {
         idx--;
       } else {
@@ -70,7 +70,7 @@ router.post('/slack/actions', function(req, res, next) {
       message = createSelectMessage(tag, page, idx);
       break;
     case 'next':
-      console.log('next');
+      // console.log('next');
       if (idx < 23) {
         idx++;
       } else {
@@ -80,14 +80,23 @@ router.post('/slack/actions', function(req, res, next) {
       message = createSelectMessage(tag, page, idx);
       break;
     case 'send':
-      console.log('send');
+      // console.log('send');
       sendMessageToSlackResponseURL(responseUrl, {
         'response_type': 'in_channel',
-        'attachments': [
-          {
-            'image_url': strings[3]
-          }
-        ]
+        'attachments': [{
+          'blocks': [
+            {
+              "type": "image",
+              "title": {
+                "type": "plain_text",
+                "text": "jjal",
+                "emoji": true
+              },
+              "image_url": strings[3],
+              "alt_text": "jjal"
+            }
+          ]
+        }]
       });
       return;
   }
