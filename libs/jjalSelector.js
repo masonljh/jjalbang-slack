@@ -11,6 +11,7 @@ exports.getJJalList = function(tag, page, callback) {
 			mode: 'key'
 		}
 	}, function(error, response, body) {
+		console.log(error);
 		callback(error, JSON.parse(body));
 	});
 };

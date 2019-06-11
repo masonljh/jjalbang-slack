@@ -151,7 +151,7 @@ router.post('/', function(req, res, next) {
   }
 
   var message = createSelectMessage(req.body.text, 0, 0);
-  jjalSelector.getJJalList(tag, 0, function(err, result) {
+  jjalSelector.getJJalList(req.body.text, 0, function(err, result) {
     if (err) {
       sendMessageToSlackResponseURL(responseUrl, {
         'response_type': 'ephemeral', 
