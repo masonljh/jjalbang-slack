@@ -47,7 +47,7 @@ router.post('/', function(req, res, next) {
     type: 'section',
     text: {
       type: 'mrkdwn',
-      text: '*짤을 선택해주세요*'
+      text: '*짤을 선택해주세요*\n(만약 해당 키워드에 해당하는 새로운 짤이 추가되었을 경우 다음 혹은 이전이 중복되서 보일 수 있습니다.)'
     }
   });
 
@@ -56,44 +56,16 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
-  /* 결과 리스트 */
+  /* 이미지 */
   blocks.push({
-    type: 'context',
-    image_url: 'https://images.pexels.com/photos/257532/pexels-photo-257532.jpeg',
-    accessory: {
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: '선택'
-      },
-      value: 'click_me_123'
-    }
-  });
-  /* 결과 리스트 */
-  blocks.push({
-    type: 'context',
-    image_url: 'https://images.pexels.com/photos/257532/pexels-photo-257532.jpeg',
-    accessory: {
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: '선택'
-      },
-      value: 'click_me_123'
-    }
-  });
-  /* 결과 리스트 */
-  blocks.push({
-    type: 'context',
-    image_url: 'https://images.pexels.com/photos/257532/pexels-photo-257532.jpeg',
-    accessory: {
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: '선택'
-      },
-      value: 'click_me_123'
-    }
+    "type": "image",
+    "title": {
+      "type": "plain_text",
+      "text": "image1",
+      "emoji": true
+    },
+    "image_url": "https://api.slack.com/img/blocks/bkb_template_images/beagle.png",
+    "alt_text": "image1"
   });
 
   /* 구분선 */
@@ -101,166 +73,18 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
-  var messageTemplate = {
-    "attachments": [
-      {
-        "blocks": [
-          {
-            "type": "section",
-            "text": {
-              "type": "mrkdwn",
-              "text": "*짤을 선택해주세요*"
-            }
-          },
-          {
-            "type": "divider"
-          },
-          {
-            "type": "image",
-            "title": {
-              "type": "plain_text",
-              "text": "image1",
-              "emoji": true
-            },
-            "image_url": "https://api.slack.com/img/blocks/bkb_template_images/beagle.png",
-            "alt_text": "image1"
-          },
-          {
-            "type": "divider"
-          }
-        ]
-      },
-      {
-        "text": "Choose a game to play",
-        "fallback": "You are unable to choose a game",
-        "callback_id": "wopr_game",
-        "color": "#3AA3E3",
-        "attachment_type": "default",
-        "actions": [
-          {
-            "name": "game",
-            "text": "Chess",
-            "type": "button",
-            "value": "chess"
-          },
-          {
-            "name": "game",
-            "text": "Falken's Maze",
-            "type": "button",
-            "value": "maze"
-          },
-          {
-            "name": "game",
-            "text": "Thermonuclear War",
-            "style": "danger",
-            "type": "button",
-            "value": "war",
-            "confirm": {
-              "title": "Are you sure?",
-              "text": "Wouldn't you prefer a good game of chess?",
-              "ok_text": "Yes",
-              "dismiss_text": "No"
-            }
-          }
-        ]
-      }
-    ]
-  };
-
+  var buttons = {};
+  buttons.fallback = 'You are unable to choose a jjal';
+  buttons.callback_id = 'jjal_interaction';
+  buttons.color = '#3AA3E3';
+  buttons.attachment_type = 'default';
+  buttons.actions = [];
+  initializeButtons(buttons, ['prev', 'next', 'cancel', 'send']);
 
   message.attachments.push({ 'blocks': blocks });
+  message.attachments.push(buttons);
 
-  // var message = {
-  //   "text": "I am a test message http://slack.com"
-  //   "attachments": [
-  //     {
-  //     "blocks": [
-  //       {
-  //         "type": "section",
-  //         "text": {
-  //           "type": "mrkdwn",
-  //           "text": "Hello, Assistant to the Regional Manager Dwight! *Michael Scott* wants to know where you'd like to take the Paper Company investors to dinner tonight.\n\n *Please select a restaurant:*"
-  //         }
-  //       },
-  //       {
-  //         "type": "divider"
-  //       },
-  //       {
-  //         "type": "section",
-  //         "text": {
-  //           "type": "mrkdwn",
-  //           "text": "*Farmhouse Thai Cuisine*\n:star::star::star::star: 1528 reviews\n They do have some vegan options, like the roti and curry, plus they have a ton of salad stuff and noodles can be ordered without meat!! They have something for everyone here"
-  //         },
-  //         "accessory": {
-  //           "type": "image",
-  //           "image_url": "https://s3-media3.fl.yelpcdn.com/bphoto/c7ed05m9lC2EmA3Aruue7A/o.jpg",
-  //           "alt_text": "alt text for image"
-  //         }
-  //       },
-  //       {
-  //         "type": "section",
-  //         "text": {
-  //           "type": "mrkdwn",
-  //           "text": "*Kin Khao*\n:star::star::star::star: 1638 reviews\n The sticky rice also goes wonderfully with the caramelized pork belly, which is absolutely melt-in-your-mouth and so soft."
-  //         },
-  //         "accessory": {
-  //           "type": "image",
-  //           "image_url": "https://s3-media2.fl.yelpcdn.com/bphoto/korel-1YjNtFtJlMTaC26A/o.jpg",
-  //           "alt_text": "alt text for image"
-  //         }
-  //       },
-  //       {
-  //         "type": "section",
-  //         "text": {
-  //           "type": "mrkdwn",
-  //           "text": "*Ler Ros*\n:star::star::star::star: 2082 reviews\n I would really recommend the  Yum Koh Moo Yang - Spicy lime dressing and roasted quick marinated pork shoulder, basil leaves, chili & rice powder."
-  //         },
-  //         "accessory": {
-  //           "type": "image",
-  //           "image_url": "https://s3-media2.fl.yelpcdn.com/bphoto/DawwNigKJ2ckPeDeDM7jAg/o.jpg",
-  //           "alt_text": "alt text for image"
-  //         }
-  //       },
-  //       {
-  //         "type": "divider"
-  //       },
-  //       {
-  //         "type": "actions",
-  //         "elements": [
-  //           {
-  //             "type": "button",
-  //             "text": {
-  //               "type": "plain_text",
-  //               "text": "Farmhouse",
-  //               "emoji": true
-  //             },
-  //             "value": "click_me_123"
-  //           },
-  //           {
-  //             "type": "button",
-  //             "text": {
-  //               "type": "plain_text",
-  //               "text": "Kin Khao",
-  //               "emoji": true
-  //             },
-  //             "value": "click_me_123"
-  //           },
-  //           {
-  //             "type": "button",
-  //             "text": {
-  //               "type": "plain_text",
-  //               "text": "Ler Ros",
-  //               "emoji": true
-  //             },
-  //             "value": "click_me_123"
-  //           }
-  //         ]
-  //       }
-  //     ]
-  //   }
-  // ]};
-
-
+  var idx = 0;
   var page = 0;
   var tag;
 
@@ -274,10 +98,6 @@ router.post('/', function(req, res, next) {
 
   tag = req.body.text;
 
-  if (req.body.text.page) {
-    page = req.body.text.page;
-  }
-
   jjalSelector.getJJalList(tag, page, function(err, result) {
     if (err) {
       res.json({
@@ -287,7 +107,7 @@ router.post('/', function(req, res, next) {
       return;
     }
 
-    sendMessageToSlackResponseURL(responseUrl, messageTemplate);
+    sendMessageToSlackResponseURL(responseUrl, message);
 
     // res.json({
     //   'response_type': 'in_channel',
@@ -296,9 +116,20 @@ router.post('/', function(req, res, next) {
   });
 });
 
-function sendMessageToSlackResponseURL(responseURL, JSONmessage){
+function initializeButtons(buttons, names) {
+  for (var i in names) {
+    buttons.actions.push({
+      name: names[i],
+      text: names[i],
+      type: 'button',
+      value: tag + '/0/0'
+    });
+  }
+}
+
+function sendMessageToSlackResponseURL(responseUrl, JSONmessage){
   var postOptions = {
-      uri: responseURL,
+      uri: responseUrl,
       method: 'POST',
       headers: {
           'Content-type': 'application/json'

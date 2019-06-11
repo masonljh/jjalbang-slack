@@ -5,6 +5,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { createMessageAdapter } = require('@slack/interactive-messages');
+var jjalSelector = require('./libs/jjalSelector');
 
 var indexRouter = require('./routes/index');
 
@@ -22,6 +23,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Create the adapter using the app's signing secret, read from environment variable
 const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
+slackInteractions.action({ type: 'button' }, function(payload, respond) {
+  console.log('payload', payload);
+
+});
+
 app.use('/slack/actions', slackInteractions.expressMiddleware());
 
 app.use('/', indexRouter);
