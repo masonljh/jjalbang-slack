@@ -133,7 +133,7 @@ router.post('/', function(req, res, next) {
 function initializeButtons(buttons, names, tag) {
   for (var i in names) {
     buttons.actions.push({
-      name: names[i],
+      name: 'decisionImage_' + names[i],
       text: names[i],
       type: 'button',
       value: tag + '/0/0'
