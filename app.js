@@ -4,8 +4,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const { createMessageAdapter } = require('@slack/interactive-messages');
 var jjalSelector = require('./libs/jjalSelector');
+const limit = process.env.EXPRESS_LIMIT || '100kb';
+const paramLimit = parseInt(process.env.EXPRESS_PARAMETER_LIMIT) || 1000;
 
 var indexRouter = require('./routes/index');
 
@@ -20,30 +21,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Create the adapter using the app's signing secret, read from environment variable
-const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
-slackInteractions.action('decisionImage_prev', function(payload, respond) {
-  console.log('payload', payload);
-
-});
-
-slackInteractions.action('decisionImage_next', function(payload, respond) {
-  console.log('payload', payload);
-
-});
-
-slackInteractions.action('decisionImage_cancel', function(payload, respond) {
-  console.log('payload', payload);
-
-});
-
-slackInteractions.action('decisionImage_send', function(payload, respond) {
-  console.log('payload', payload);
-
-});
-
-app.use('/slack/actions', slackInteractions.expressMiddleware());
 
 app.use('/', indexRouter);
 

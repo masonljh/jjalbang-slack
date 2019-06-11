@@ -31,6 +31,19 @@ router.get('/auth/redirect', function(req, res, next) {
   });
 });
 
+router.post('/slack/actions', function(req, res, next) {
+  res.status(200).end();
+
+  let responseUrl = req.body.response_url;
+  if (req.body.token != process.env.TOKEN) {
+    res.status(403).end("Access forbidden");
+    return;
+  }
+
+  console.log(req.body);
+  // res.json(req.body);
+});
+
 router.post('/', function(req, res, next) {
   res.status(200).end();
 
@@ -133,7 +146,7 @@ router.post('/', function(req, res, next) {
 function initializeButtons(buttons, names, tag) {
   for (var i in names) {
     buttons.actions.push({
-      name: 'decisionImage_' + names[i],
+      name: names[i],
       text: names[i],
       type: 'button',
       value: tag + '/0/0'
