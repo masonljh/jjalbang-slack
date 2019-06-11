@@ -9,6 +9,8 @@ var jjalSelector = require('./libs/jjalSelector');
 
 var indexRouter = require('./routes/index');
 
+const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
+
 var app = express();
 
 // view engine setup
@@ -22,7 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Create the adapter using the app's signing secret, read from environment variable
-const slackInteractions = createMessageAdapter(process.env.SLACK_SIGNING_SECRET);
 slackInteractions.action({ type: 'button' }, function(payload, respond) {
   console.log('payload', payload);
 
