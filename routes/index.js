@@ -35,6 +35,7 @@ router.post('/slack/actions', function(req, res, next) {
   res.status(200).end();
 
   var payload = JSON.parse(req.body.payload);
+  // console.log(payload);
 
   let responseUrl = payload.response_url;
   if (payload.token != process.env.TOKEN) {
