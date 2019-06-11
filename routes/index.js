@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var jjalSelector = require('../libs/jjalSelector');
+var request = require('request');
 
 /* GET addToSlack page. */
 router.get('/auth', function(req, res, next) {
