@@ -83,22 +83,43 @@ router.post('/slack/actions', function(req, res, next) {
       // console.log('send');
       sendMessageToSlackResponseURL(responseUrl, {
         'response_type': 'in_channel',
-        'replace_original': true,
-        'attachments': [{
-          'blocks': [
-            {
-              "type": "image",
-              "title": {
-                "type": "plain_text",
-                "text": tag,
-                "emoji": true
-              },
-              "image_url": strings[3],
-              "alt_text": tag
-            }
-          ]
-        }]
+        'delete_original': true
       });
+
+      var JSONmessage = {
+        'token': payload.token,
+        'channel': payload.channel.id,
+        'text': tag,
+        'as_user': true,
+        'blocks': [
+          {
+            "type": "image",
+            "title": {
+              "type": "plain_text",
+              "text": tag,
+              "emoji": true
+            },
+            "image_url": strings[3],
+            "alt_text": tag
+          }
+        ]
+      }
+
+      var postOptions = {
+        uri: responseUrl,
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        json: JSONmessage
+      };
+
+      request(postOptions, (error, response, body) => {
+          if (error){
+              // handle errors as you see fit
+          }
+      });
+
       return;
   }
 
@@ -266,12 +287,12 @@ function sendMessageToSlackResponseURL(responseUrl, JSONmessage){
           'Content-type': 'application/json'
       },
       json: JSONmessage
-  }
+  };
   request(postOptions, (error, response, body) => {
       if (error){
           // handle errors as you see fit
       }
-  })
+  });
 }
 
 module.exports = router;
