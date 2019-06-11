@@ -11,7 +11,10 @@ router.post('/', function(req, res, next) {
   var page = 0;
 
   if (!req.body.text || !req.body.text.tag) {
-    res.status(400).json({code: '400', msg: 'Tag is undefined!'});
+    res.json({
+      'response_type': 'ephemeral', 
+      'text': 'You should input tag.'
+    });
     return;
   }
 
@@ -21,11 +24,17 @@ router.post('/', function(req, res, next) {
 
   jjalSelector.getJJalList(req.body.text.tag, page, function(err, result) {
     if (err) {
-      res.json(err);
+      res.json({
+        'response_type': 'ephemeral',
+        'text': 'Sorry, that didn\'t work. Please try again.'
+      });
       return;
     }
 
-    res.status(200).json(result);
+    res.json({
+      'response_type': 'in_channel',
+      'text': result
+    });
   });
 });
 
