@@ -98,7 +98,7 @@ router.post('/', function(req, res, next) {
       return;
     }
 
-    sendMessageToSlackResponseURL(responseURL, message);
+    sendMessageToSlackResponseURL(responseUrl, message);
 
     // res.json({
     //   'response_type': 'in_channel',
