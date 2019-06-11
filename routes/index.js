@@ -160,7 +160,8 @@ router.post('/', function(req, res, next) {
     }
 
     message.attachments[0].blocks[2].image_url = 'http://' + config.hostname + result[0].list_jjal.substring(startIdx, endIdx);
-    message.attachments[1].actions[3].value += message.attachments[0].blocks[2].image_url;
+    console.log(message.attachments[1].actions[3].value);
+    message.attachments[1].actions[3].value = message.attachments[1].actions[3].value + "/" + message.attachments[0].blocks[2].image_url;
 
     console.log(message.attachments[0].blocks[2].image_url);
     sendMessageToSlackResponseURL(responseUrl, message);
