@@ -87,7 +87,7 @@ router.post('/', function(req, res, next) {
   var tag;
 
   if (!req.body.text) {
-    res.json({
+    sendMessageToSlackResponseURL(responseUrl, {
       'response_type': 'ephemeral', 
       'text': 'You should input tag.'
     });
@@ -98,8 +98,8 @@ router.post('/', function(req, res, next) {
 
   jjalSelector.getJJalList(tag, 0, function(err, result) {
     if (err) {
-      res.json({
-        'response_type': 'ephemeral',
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
         'text': 'Sorry, that didn\'t work. Please try again.'
       });
       return;
