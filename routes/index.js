@@ -38,7 +38,10 @@ router.post('/slack/actions', function(req, res, next) {
 
   let responseUrl = payload.response_url;
   if (payload.token != process.env.TOKEN) {
-    res.status(403).end("Access forbidden");
+    sendMessageToSlackResponseURL(responseUrl, {
+      'response_type': 'ephemeral', 
+      'text': 'Forbidden'
+    });
     return;
   }
   
@@ -125,12 +128,6 @@ router.post('/slack/actions', function(req, res, next) {
 
     sendMessageToSlackResponseURL(responseUrl, message);
   });
-
-  console.log(tag + " / " + page + " / " + idx);
-  // res.json({
-  //   'response_type': 'in_channel',
-  //   'text': result
-  // });
 });
 
 router.post('/', function(req, res, next) {
@@ -138,7 +135,10 @@ router.post('/', function(req, res, next) {
 
   let responseUrl = req.body.response_url;
   if (req.body.token != process.env.TOKEN) {
-    res.status(403).end("Access forbidden");
+    sendMessageToSlackResponseURL(responseUrl, {
+      'response_type': 'ephemeral', 
+      'text': 'Forbidden'
+    });
     return;
   }
 
