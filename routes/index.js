@@ -101,6 +101,73 @@ router.post('/', function(req, res, next) {
     type: 'divider'
   });
 
+  var messageTemplate = {
+    "attachments": [
+      {
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "*짤을 선택해주세요*"
+            }
+          },
+          {
+            "type": "divider"
+          },
+          {
+            "type": "image",
+            "title": {
+              "type": "plain_text",
+              "text": "image1",
+              "emoji": true
+            },
+            "image_url": "https://api.slack.com/img/blocks/bkb_template_images/beagle.png",
+            "alt_text": "image1"
+          },
+          {
+            "type": "divider"
+          }
+        ]
+      },
+      {
+        "text": "Choose a game to play",
+        "fallback": "You are unable to choose a game",
+        "callback_id": "wopr_game",
+        "color": "#3AA3E3",
+        "attachment_type": "default",
+        "actions": [
+          {
+            "name": "game",
+            "text": "Chess",
+            "type": "button",
+            "value": "chess"
+          },
+          {
+            "name": "game",
+            "text": "Falken's Maze",
+            "type": "button",
+            "value": "maze"
+          },
+          {
+            "name": "game",
+            "text": "Thermonuclear War",
+            "style": "danger",
+            "type": "button",
+            "value": "war",
+            "confirm": {
+              "title": "Are you sure?",
+              "text": "Wouldn't you prefer a good game of chess?",
+              "ok_text": "Yes",
+              "dismiss_text": "No"
+            }
+          }
+        ]
+      }
+    ]
+  };
+
+
   message.attachments.push({ 'blocks': blocks });
 
   // var message = {
@@ -220,7 +287,7 @@ router.post('/', function(req, res, next) {
       return;
     }
 
-    sendMessageToSlackResponseURL(responseUrl, message);
+    sendMessageToSlackResponseURL(responseUrl, messageTemplate);
 
     // res.json({
     //   'response_type': 'in_channel',
