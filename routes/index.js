@@ -24,6 +24,7 @@ router.post('/', function(req, res, next) {
       return;
     }
 
+    result.challenge = 'yl3XiPOrmGPIqzHXpiAX2U0N';
     res.status(200).json(result);
   });
 });
