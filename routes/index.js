@@ -58,7 +58,7 @@ router.post('/', function(req, res, next) {
 
     res.json({
       'response_type': 'in_channel',
-      'text': Stringifyresult
+      'text': result
     });
   });
 });
