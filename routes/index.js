@@ -30,6 +30,48 @@ router.get('/auth/redirect', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
+  res.status(200).end();
+
+  let responseUrl = req.body.response_url;
+  if (req.body.token != process.env.TOKEN) {
+    res.status(403).end("Access forbidden");
+    return;
+  }
+
+  var message = {
+    text: 'This is your first interactive message',
+    attachments: [
+      {
+        text: 'Building buttons is easy right?',
+        fallback: 'Shame... buttons aren\'t supported in this land',
+        callback_id: 'button_tutorial',
+        color: '#3AA3E3',
+        attachment_type: 'default',
+        actions: [
+          {
+            name: 'cancel',
+            text: 'cancel',
+            type: 'button',
+            value: 'cancel',
+            style: 'danger'
+          },
+          {
+            name: 'prev',
+            text: 'prev',
+            type: 'button',
+            value: 'prev'
+          },
+          {
+            name: 'next',
+            text: 'next',
+            type: 'button',
+            value: 'next'
+          }
+        ]
+      }
+    ]
+  };
+
   var page = 0;
   var tag;
 
@@ -56,11 +98,29 @@ router.post('/', function(req, res, next) {
       return;
     }
 
-    res.json({
-      'response_type': 'in_channel',
-      'text': result
-    });
+    sendMessageToSlackResponseURL(responseURL, message);
+
+    // res.json({
+    //   'response_type': 'in_channel',
+    //   'text': result
+    // });
   });
 });
+
+function sendMessageToSlackResponseURL(responseURL, JSONmessage){
+  var postOptions = {
+      uri: responseURL,
+      method: 'POST',
+      headers: {
+          'Content-type': 'application/json'
+      },
+      json: JSONmessage
+  }
+  request(postOptions, (error, response, body) => {
+      if (error){
+          // handle errors as you see fit
+      }
+  })
+}
 
 module.exports = router;
