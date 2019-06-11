@@ -9,22 +9,22 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   var page = 0;
-  if (!req.body.tag) {
+
+  if (!req.body.text || !req.body.text.tag) {
     res.status(400).json({code: '400', msg: 'Tag is undefined!'});
     return;
   }
 
-  if (req.body.page) {
-    page = req.body.page;
+  if (req.body.text.page) {
+    page = req.body.text.page;
   }
 
-  jjalSelector.getJJalList(req.body.tag, page, function(err, result) {
+  jjalSelector.getJJalList(req.body.text.tag, page, function(err, result) {
     if (err) {
       res.json(err);
       return;
     }
 
-    result.challenge = 'yl3XiPOrmGPIqzHXpiAX2U0N';
     res.status(200).json(result);
   });
 });
