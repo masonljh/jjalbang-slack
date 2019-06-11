@@ -83,17 +83,18 @@ router.post('/slack/actions', function(req, res, next) {
       // console.log('send');
       sendMessageToSlackResponseURL(responseUrl, {
         'response_type': 'in_channel',
+        'replace_original': true,
         'attachments': [{
           'blocks': [
             {
               "type": "image",
               "title": {
                 "type": "plain_text",
-                "text": "jjal",
+                "text": tag,
                 "emoji": true
               },
               "image_url": strings[3],
-              "alt_text": "jjal"
+              "alt_text": tag
             }
           ]
         }]
