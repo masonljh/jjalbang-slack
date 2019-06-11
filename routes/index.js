@@ -9,8 +9,9 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   var page = 0;
+  var tag;
 
-  if (!req.body.text || !req.body.text.tag) {
+  if (!req.body.text) {
     res.json({
       'response_type': 'ephemeral', 
       'text': 'You should input tag.'
@@ -18,11 +19,13 @@ router.post('/', function(req, res, next) {
     return;
   }
 
+  tag = req.body.text;
+
   if (req.body.text.page) {
     page = req.body.text.page;
   }
 
-  jjalSelector.getJJalList(req.body.text.tag, page, function(err, result) {
+  jjalSelector.getJJalList(tag, page, function(err, result) {
     if (err) {
       res.json({
         'response_type': 'ephemeral',
