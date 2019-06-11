@@ -79,13 +79,11 @@ router.post('/', function(req, res, next) {
   buttons.color = '#3AA3E3';
   buttons.attachment_type = 'default';
   buttons.actions = [];
-  initializeButtons(buttons, ['prev', 'next', 'cancel', 'send']);
+  initializeButtons(buttons, ['prev', 'next', 'cancel', 'send'], tag);
 
   message.attachments.push({ 'blocks': blocks });
   message.attachments.push(buttons);
 
-  var idx = 0;
-  var page = 0;
   var tag;
 
   if (!req.body.text) {
@@ -98,7 +96,7 @@ router.post('/', function(req, res, next) {
 
   tag = req.body.text;
 
-  jjalSelector.getJJalList(tag, page, function(err, result) {
+  jjalSelector.getJJalList(tag, 0, function(err, result) {
     if (err) {
       res.json({
         'response_type': 'ephemeral',
@@ -116,7 +114,7 @@ router.post('/', function(req, res, next) {
   });
 });
 
-function initializeButtons(buttons, names) {
+function initializeButtons(buttons, names, tag) {
   for (var i in names) {
     buttons.actions.push({
       name: names[i],
