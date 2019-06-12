@@ -34,7 +34,7 @@ router.post('/slack/actions', function(req, res, next) {
   res.status(200).end();
 
   var payload = JSON.parse(req.body.payload);
-  console.log(payload);
+  // console.log(payload);
 
   let responseUrl = payload.response_url;
   if (payload.token != process.env.TOKEN) {
@@ -112,10 +112,8 @@ router.post('/slack/actions', function(req, res, next) {
         uri: 'https://slack.com/api/chat.postMessage',
         method: 'POST',
         headers: {
-            'Content-type': 'application/json'
-        },
-        auth: {
-          'bearer': process.env.SLACK_ACCESS_TOKEN
+            'Content-type': 'application/json',
+            'Authorization': 'Bearer ' + process.env.SLACK_ACCESS_TOKEN 
         },
         json: JSONmessage
       };
