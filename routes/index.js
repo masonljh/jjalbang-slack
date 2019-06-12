@@ -89,7 +89,6 @@ router.post('/slack/actions', function(req, res, next) {
       request()
 
       var JSONmessage = {
-        'token': payload.token,
         'channel': payload.channel.id,
         'text': tag,
         'as_user': false,
@@ -114,6 +113,9 @@ router.post('/slack/actions', function(req, res, next) {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
+        },
+        auth: {
+          'bearer': process.env.SLACK_ACCESS_TOKEN
         },
         json: JSONmessage
       };
