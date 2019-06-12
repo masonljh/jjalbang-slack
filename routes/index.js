@@ -98,47 +98,6 @@ router.post('/slack/actions', function(req, res, next) {
           }
         ]
       });
-
-      var JSONmessage = {
-        'channel': payload.channel.id,
-        'text': tag,
-        'as_user': false,
-        'blocks': [
-          {
-            "type": "image",
-            "title": {
-              "type": "plain_text",
-              "text": tag,
-              "emoji": true
-            },
-            "image_url": strings[3],
-            "alt_text": tag
-          }
-        ]
-      }
-
-      console.log(JSONmessage);
-
-      var postOptions = {
-        uri: 'https://slack.com/api/chat.postMessage',
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json',
-            'Authorization': 'Bearer ' + process.env.SLACK_ACCESS_TOKEN 
-        },
-        json: JSONmessage
-      };
-
-      request(postOptions, (error, response, body) => {
-          if (error){
-              // handle errors as you see fit
-              console.log('error', error);
-              return;
-          }
-
-          console.log(body);
-      });
-
       return;
   }
 
