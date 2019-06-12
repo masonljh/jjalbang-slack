@@ -87,9 +87,9 @@ router.post('/slack/actions', function(req, res, next) {
       });
 
       var JSONmessage = {
-        'channel': payload.user.id,
+        'channel': payload.channel.id,
         'text': tag,
-        'as_user': true,
+        'as_user': false,
         'blocks': [
           {
             "type": "image",
