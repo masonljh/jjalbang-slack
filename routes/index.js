@@ -105,6 +105,8 @@ router.post('/slack/actions', function(req, res, next) {
         ]
       }
 
+      console.log(JSONmessage);
+
       var postOptions = {
         uri: 'https://slack.com/api/chat.postMessage',
         method: 'POST',
