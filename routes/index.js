@@ -86,8 +86,6 @@ router.post('/slack/actions', function(req, res, next) {
         'delete_original': true
       });
 
-      request()
-
       var JSONmessage = {
         'channel': payload.channel.id,
         'text': tag,
