@@ -113,7 +113,7 @@ router.post('/slack/actions', function(req, res, next) {
     if (result[idx] === undefined) {
       sendMessageToSlackResponseURL(responseUrl, {
         'response_type': 'ephemeral', 
-        'text': 'There is no result. Please try again.'
+        'text': 'There is no result. Don\' try again.'
       });
       return;
     }
