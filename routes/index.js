@@ -110,6 +110,14 @@ router.post('/slack/actions', function(req, res, next) {
       return;
     }
 
+    if (result[idx] === undefined) {
+      sendMessageToSlackResponseURL(responseUrl, {
+        'response_type': 'ephemeral', 
+        'text': 'There is no result. Please try again.'
+      });
+      return;
+    }
+
     var jjalStr = result[idx].list_jjal;
     let startIdx = jjalStr.indexOf('<img src=\"/files') + 10;
     let endIdx = -1;
